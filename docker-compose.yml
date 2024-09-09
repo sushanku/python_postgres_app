@@ -5,6 +5,8 @@ services:
     image: sushanku/flask-upload-app:latest
     ports:
       - "5000:5000"
+    networks:
+      - flaskapp-network
     environment:
       POSTGRES_DB: mydb
       POSTGRES_USER: myuser
@@ -20,8 +22,15 @@ services:
       POSTGRES_DB: mydb
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
+    networks:
+      - flaskapp-network
     volumes:
       - pgdata:/var/lib/postgresql/data
 
 volumes:
   pgdata:
+
+
+networks:
+  flaskapp-network:
+    driver: bridge
