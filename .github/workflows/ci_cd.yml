@@ -10,7 +10,7 @@ on:
       DOCKER_IMAGE:
         description: 'Docker image name (including DockerHub username)'
         required: true
-        default: 'your-dockerhub-username/your-image-name'
+        default: 'sushanku/flask-upload-app'
       DOCKER_TAG:
         description: 'Docker image tag'
         required: true
