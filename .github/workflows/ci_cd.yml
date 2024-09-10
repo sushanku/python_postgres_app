@@ -42,12 +42,11 @@ jobs:
     - name: Push Docker Image
       run: |
         docker tag ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} ${{ env.DOCKER_IMAGE }}:latest
-        docker push ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
         docker push ${{ env.DOCKER_IMAGE }}:latest
 
     - name: Deploy with Docker
       run: |
-        echo "Deploying docker image for spring petclinic application"
+        echo "Deploying docker image for flask postgres application"
         docker compose -f docker-compose.yml up -d
 
     - name: Logout from DockerHub
