@@ -50,8 +50,10 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: [self-hosted, flask-server]
-    
+
     steps:
+    - uses: actions/checkout@v2
+
     - name: Deploy with Docker
       run: |
         echo "Deploying docker image for flask postgres application"
