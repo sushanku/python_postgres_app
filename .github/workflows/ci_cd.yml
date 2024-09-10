@@ -1,8 +1,6 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -17,7 +15,7 @@ on:
         default: 'latest'
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
     
     steps:
@@ -25,7 +23,7 @@ jobs:
     
     - name: Set environment variables
       run: |
-        echo "DOCKER_IMAGE=${{ github.event.inputs.DOCKER_IMAGE || 'your-dockerhub-username/your-image-name' }}" >> $GITHUB_ENV
+        echo "DOCKER_IMAGE=${{ github.event.inputs.DOCKER_IMAGE || 'sushanku/flask-upload-app' }}" >> $GITHUB_ENV
         echo "DOCKER_TAG=${{ github.event.inputs.DOCKER_TAG || github.run_number }}" >> $GITHUB_ENV
 
     - name: Build Docker Image
@@ -42,13 +40,19 @@ jobs:
     - name: Push Docker Image
       run: |
         docker tag ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} ${{ env.DOCKER_IMAGE }}:latest
+        docker push ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
         docker push ${{ env.DOCKER_IMAGE }}:latest
-
-    - name: Deploy with Docker
-      run: |
-        echo "Deploying docker image for flask postgres application"
-        docker compose -f docker-compose.yml up -d
 
     - name: Logout from DockerHub
       if: always()
       run: docker logout
+
+  deploy:
+    needs: build-and-push
+    runs-on: [self-hosted, flask-server]
+    
+    steps:
+    - name: Deploy with Docker
+      run: |
+        echo "Deploying docker image for flask postgres application"
+        docker compose -f docker-compose.yml up -d
